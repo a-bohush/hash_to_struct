@@ -1,4 +1,5 @@
 require "bundler/setup"
+require "pry-byebug"
 require "hash_to_struct"
 
 RSpec.configure do |config|
