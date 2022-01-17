@@ -1,8 +1,10 @@
 # HashToStruct
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/hash_to_struct`. To experiment with that code, run `bin/console` for an interactive prompt.
+It enables recursive conversion of ruby Hash to Struct-like object and back.
 
-TODO: Delete this and the text above, and describe your gem
+Stop thinking about symbols vs strings when accessing values in your hash. Simply call a method.
+
+It is built on top of standard `Struct` and `OpenStruct` classes with all their features preserved while adding a few on top for conveniences like handling nested hashes/arrays, unified constructor interface, immutability.
 
 ## Installation
 
@@ -22,23 +24,60 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+`Struct` based conversion:
 
-## Development
+```ruby
+struct = HashToStruct.struct({q: 1})
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+struct.q # => 1
+struct[:x] # => NameError: no member 'x' in struct
+```
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+`OpenStruct` based conversion:
+
+```ruby
+ostruct = HashToStruct.ostruct({q: 1})
+
+ostruct.q # => 1
+ostruct[:x] = 5
+ostruct.x # => 5
+```
+
+Convert back to `Hash`:
+
+```ruby
+ostruct.to_h # => { :q => 1, :x => 5 }
+```
+
+Recursive conversion:
+
+```ruby
+struct = HashToStruct.struct({q: 1, w: { e: 2 }})
+
+struct.q.w.e # => 2
+```
+**Note!** It will only convert objects of type Hash, not Hash derivatives or some acting like Hash.
+
+Recursive conversions inside `Array`:
+
+```ruby
+struct = HashToStruct.struct({q: 1, w: [{ e: 2 }]}, including_arrays: true)
+
+struct.q.w.first.e # => 2
+```
+**Note!** It will only iterate over objects of type Array, not Array derivatives or other enumerables.
+
+Make immutable:
+```ruby
+struct = HashToStruct.struct({q: 1}, immutable: true)
+
+struct.q = 2 # => FrozenError: can't modify frozen #<struct q=1>
+```
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/hash_to_struct. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/hash_to_struct/blob/master/CODE_OF_CONDUCT.md).
-
+Bug reports and pull requests are welcome on GitHub at https://github.com/a-bohush/hash_to_struct.
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the HashToStruct project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/hash_to_struct/blob/master/CODE_OF_CONDUCT.md).
