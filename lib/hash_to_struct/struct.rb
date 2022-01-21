@@ -25,11 +25,11 @@ module HashToStruct
 
     def to_struct(hash)
       h = hash.each_key.each_with_object({}) do |key, h|
-        create_new = -> (hv) { self.class.new(hv, **@options) }
+        create_new = -> (v) { is_hash?(v) ? self.class.new(v, **@options) : v}
         h[key] = case
-                 when hash[key].class == Hash
+                 when is_hash?(hash[key])
                    create_new.call(hash[key])
-                 when @options[:including_arrays] && hash[key].class == Array
+                 when @options[:including_arrays] && is_array?(hash[key])
                    hash[key].map(&create_new)
                  else
                    hash[key]
@@ -43,12 +43,21 @@ module HashToStruct
         h.keys.each do |key|
           h[key] = case
                    when h[key].is_a?(self.class) then h[key].to_h
-                   when h[key].class == Array then h[key].map(&:to_h)
+                   when is_array?(h[key])
+                     h[key].map { |v| v.is_a?(self.class) ? v.to_h : v }
                    else
                      h[key]
                    end
         end
       end
+    end
+
+    def is_hash?(val)
+      val.class == Hash
+    end
+
+    def is_array?(val)
+      val.class == Array
     end
   end
 end

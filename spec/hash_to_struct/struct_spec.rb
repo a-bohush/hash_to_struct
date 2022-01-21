@@ -6,7 +6,8 @@ RSpec.describe HashToStruct::Struct do
       e: {
         r: 3,
         t: { y: 4 },
-        u: [{i: 5}]
+        u: [{i: 5}],
+        i: [6]
       }
     }
   }
@@ -24,6 +25,11 @@ RSpec.describe HashToStruct::Struct do
     it 'also converts hashes inside arrays' do
       result = described_class.new(sample_hash, including_arrays: true)
       expect(result.e.u.first.i).to eq(5)
+    end
+
+    it 'skips non Hash members of contained array' do
+      result = described_class.new(sample_hash)
+      expect(result.e.i.first).to be_a(Integer)
     end
   end
 
