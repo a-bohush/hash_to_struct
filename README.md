@@ -1,6 +1,9 @@
 # HashToStruct
 
-It enables recursive conversion of ruby Hash to Struct-like object and back.
+[![Gem Version](https://badge.fury.io/rb/hash_to_struct.svg)](https://badge.fury.io/rb/hash_to_struct)
+[![Ruby](https://github.com/a-bohush/hash_to_struct/actions/workflows/ruby.yml/badge.svg?branch=main)](https://github.com/a-bohush/hash_to_struct/actions/workflows/ruby.yml)
+
+It enables recursive conversion of a ruby `Hash` to a Struct-like object and back.
 
 Stop thinking about symbols vs strings when accessing values in your hash. Simply call a method.
 
@@ -56,7 +59,7 @@ struct = HashToStruct.struct({q: 1, w: { e: 2 }})
 
 struct.q.w.e # => 2
 ```
-**Note!** It will only convert objects of type Hash, not Hash derivatives or some acting like Hash.
+**Note!** It will only convert objects of type Hash, not Hash derivatives or some acting like a Hash.
 
 Recursive conversions inside `Array`:
 
